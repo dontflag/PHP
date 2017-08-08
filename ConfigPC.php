@@ -8,17 +8,17 @@ $fpo_code = array('A','B','C','U');
 $MKs = $MSOs = array();
 
 $confdb = ibase_connect($config);
-$cont = substr(basename($lbd,'.ib'),3); //Имя контроллера
-//Первая строка конфиг-файла:
+$cont = substr(basename($lbd,'.ib'),3); //РРјСЏ РєРѕРЅС‚СЂРѕР»Р»РµСЂР°
+//РџРµСЂРІР°СЏ СЃС‚СЂРѕРєР° РєРѕРЅС„РёРі-С„Р°Р№Р»Р°:
 $qry = "select NodeID,AbnNo,Coeffs,Flags,LBDZoneLens, ParentID from ASTree 
-  where Name='{$cont}' and Category=3";  //Category=3 - контроллер
+  where Name='{$cont}' and Category=3";  //Category=3 - ГЄГ®Г­ГІГ°Г®Г«Г«ГҐГ°
 $recs = ibase_query($confdb, $qry);
 while ($rec = ibase_fetch_object($recs)) { 
   $NodeID = $rec->NODEID;
   $CrateID = $rec->PARENTID;
   $AbnNo = $rec->ABNNO;
   if ($AbnNo == '')    
-    echo "    Не задан номер абонента в сети ВУ\n";
+    echo "    ГЌГҐ Г§Г Г¤Г Г­ Г­Г®Г¬ГҐГ° Г ГЎГ®Г­ГҐГ­ГІГ  Гў Г±ГҐГІГЁ Г‚Г“\n";
   $FPOCodeNo = ((int)$rec->FLAGS/2048)%16;    //Flags div 2048 mod 16;
   $FPOCode = $fpo_code[$FPOCodeNo];
   if ($FPOCode == 'U') 
@@ -28,10 +28,10 @@ while ($rec = ibase_fetch_object($recs)) {
       $FPOCode = 'DU';      
   $FPODelay = GetBlob($rec->COEFFS);
   if ($FPODelay == '')    
-    echo "    Не задана задержка включения ФПО\n";
+    echo "    ГЌГҐ Г§Г Г¤Г Г­Г  Г§Г Г¤ГҐГ°Г¦ГЄГ  ГўГЄГ«ГѕГ·ГҐГ­ГЁГї Г”ГЏГЋ\n";
   $ARMSetting = $rec->LBDZONELENS;
   if ($ARMSetting == '')    
-    echo "    Не задана уставка для АРМ\n";
+    echo "    ГЌГҐ Г§Г Г¤Г Г­Г  ГіГ±ГІГ ГўГЄГ  Г¤Г«Гї ГЂГђГЊ\n";
   $ARMTact = $tact_arm[$FPOCodeNo];
   if ($FPOCodeNo == 3)  //UNO
     $Mode = $Status = '';
@@ -42,7 +42,7 @@ while ($rec = ibase_fetch_object($recs)) {
   echo "REGIM<$Mode>NAME<$cont>TYPE<$FPOCode>TAKT_ARM<$ARMTact>"
     ."UST_ARM<$ARMSetting>SHU_N<$AbnNo>STATUS<$Status>TIMEOUT_FPO<$FPODelay>\n";
 }
-//Остальные строки:
+//ГЋГ±ГІГ Г«ГјГ­Г»ГҐ Г±ГІГ°Г®ГЄГЁ:
 $qry = "select NA.AdrValue,N.NetID,N.Name from Net N, NetAddress NA
   where NA.NodeID=$NodeID and N.NetID=NA.NetID and N.Name containing 'rs'";
 $recs = ibase_query($confdb, $qry);
@@ -51,15 +51,15 @@ while ($rec = ibase_fetch_object($recs)) {
   $NetName = $rec->NAME;
   $NetAdr = $rec->ADRVALUE; //num_rs
   if ($NetAdr == '')
-    echo "    Не задан сетевой адрес в сети $NetName\n"; 
-//Получить вершины MK, связанные с входами/выходами Cont через RS
+    echo "    ГЌГҐ Г§Г Г¤Г Г­ Г±ГҐГІГҐГўГ®Г© Г Г¤Г°ГҐГ± Гў Г±ГҐГІГЁ $NetName\n"; 
+//ГЏГ®Г«ГіГ·ГЁГІГј ГўГҐГ°ГёГЁГ­Г» MK, Г±ГўГїГ§Г Г­Г­Г»ГҐ Г± ГўГµГ®Г¤Г Г¬ГЁ/ГўГ»ГµГ®Г¤Г Г¬ГЁ Cont Г·ГҐГ°ГҐГ§ RS
   $MKs = GetMK(true);
   $MKs = GetMK(false);
   if (count($MKs) > 0) 
-    foreach($MKs as $MK)  //Получить МСО, связанные с МК 
+    foreach($MKs as $MK)  //ГЏГ®Г«ГіГ·ГЁГІГј ГЊГ‘ГЋ, Г±ГўГїГ§Г Г­Г­Г»ГҐ Г± ГЊГЉ 
       $MSOs = GetMSO($MK['CrateID'], $MK['AbnNo']);  
 }
-//Получить МСО, связанные непосредственно с сетевым контроллером
+//ГЏГ®Г«ГіГ·ГЁГІГј ГЊГ‘ГЋ, Г±ГўГїГ§Г Г­Г­Г»ГҐ Г­ГҐГЇГ®Г±Г°ГҐГ¤Г±ГІГўГҐГ­Г­Г® Г± Г±ГҐГІГҐГўГ»Г¬ ГЄГ®Г­ГІГ°Г®Г«Г«ГҐГ°Г®Г¬
 $MSOs = GetMSO($CrateID, 0);    
 
 
@@ -82,7 +82,7 @@ function GetMK($inputs) {
     $MK['CrateID'] = $rec->PARENTID;
     $MK['AbnNo'] = $rec->ABNNO;
     if ($rec->ABNNO == '')
-      echo "    Не задан номер абонента RS контроллера {$rec->NAME}\n";
+      echo "    ГЌГҐ Г§Г Г¤Г Г­ Г­Г®Г¬ГҐГ° Г ГЎГ®Г­ГҐГ­ГІГ  RS ГЄГ®Г­ГІГ°Г®Г«Г«ГҐГ°Г  {$rec->NAME}\n";
     $Res[] = $MK;
   }  
   return $Res;  
@@ -100,11 +100,11 @@ function GetMSO($CrateID, $AbnNo) {
   while ($rec = ibase_fetch_object($recs)) {
     $rs_mk = GetBlob($rec->COEFFS);
     if ($rs_mk == '')
-      echo "    Не задан адрес крейта {$rec->CRATENAME}\n"; 
+      echo "    ГЌГҐ Г§Г Г¤Г Г­ Г Г¤Г°ГҐГ± ГЄГ°ГҐГ©ГІГ  {$rec->CRATENAME}\n"; 
     if ($rec->ADR == '')
-      echo "    Не задано посадочное место МСО {$rec->NAME}\n";
+      echo "    ГЌГҐ Г§Г Г¤Г Г­Г® ГЇГ®Г±Г Г¤Г®Г·Г­Г®ГҐ Г¬ГҐГ±ГІГ® ГЊГ‘ГЋ {$rec->NAME}\n";
     if ($rec->ABNNO == '')
-      echo "    Не задан номер абонента МСО {$rec->NAME}\n";
+      echo "    ГЌГҐ Г§Г Г¤Г Г­ Г­Г®Г¬ГҐГ° Г ГЎГ®Г­ГҐГ­ГІГ  ГЊГ‘ГЋ {$rec->NAME}\n";
     echo "NUM_RS<{$NetAdr}>AB_RS<{$AbnNo}>KR<{$rs_mk}>PM<{$rec->ADR}>"
       ."AB_ARM<{$rec->ABNNO}>KOD<{$rec->TYPENAME}>NAME<{$rec->NAME}>\n";
   }
