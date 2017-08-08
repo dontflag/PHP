@@ -3,7 +3,7 @@ $params = "lbd";
 include "sintar2007.php";
 
 $configdb = ibase_connect($config);
-$cont = substr(basename($lbd,'.ib'),3); //имя контроллера
+$cont = substr(basename($lbd,'.ib'),3); //РёРјСЏ РєРѕРЅС‚СЂРѕР»Р»РµСЂР°
 $NetAddress = Array (); //NETADDRESS->ADRVALUE WHERE NODEID=..
 $PinMK = Array ();
 $MKs = Array ();
@@ -14,14 +14,14 @@ $RecMK = Array ("device"=>"","exch_type"=>"RW","MKName"=>"","num_rs"=>"","takt"=
 $qry = "SELECT NODEID, FLAGS FROM ASTREE WHERE NAME = '{$cont}' AND CATEGORY = 3";
 $recs = ibase_query($configdb,$qry);
 while ($rec = ibase_fetch_object($recs)) {
-    $ContID = $rec->NODEID;  //ID контроллера
+    $ContID = $rec->NODEID;  //ID РєРѕРЅС‚СЂРѕР»Р»РµСЂР°
     $FPOCodeNo = ((int)$rec->FLAGS/2048)%16;    //Flags div 2048 mod 16;
 }
 $qry = "SELECT N.NAME, NA.NETID FROM NET N, NETADDRESS NA WHERE NA.NODEID = '{$ContID}' AND N.NETID = NA.NETID";
 $recs = ibase_query($configdb,$qry);
 while ($rec = ibase_fetch_object($recs)) {
-    $NetID = $rec->NETID;   //ID сети, обрабатываемой в текущем такте цикла
-    $NetName = $rec->NAME;   //имя этой сети
+    $NetID = $rec->NETID;   //ID СЃРµС‚Рё, РѕР±СЂР°Р±Р°С‚С‹РІР°РµРјРѕРµР№ РІ С‚РµРєСѓС‰РµРј С‚Р°РєС‚Рµ С†РёРєР»Р°
+    $NetName = $rec->NAME;   //РёРјСЏ СЃРµС‚Рё
     $NetType = str_split($NetName,2);
     if ($NetType[0] == 'rs') {
         $qry = "SELECT ADRVALUE FROM NETADDRESS WHERE NETID = '{$NetID}' AND NODEID = '{$ContID}'";
@@ -29,7 +29,7 @@ while ($rec = ibase_fetch_object($recs)) {
         while ($InsRec = ibase_fetch_object($InsRecs)) 
             $NumRS = $InsRec -> ADRVALUE;
         if ($NumRS == ' ') 
-            echo "Не задан адрес в сети  $NetName\n";
+            echo "ГЌГҐ Г§Г Г¤Г Г­ Г Г¤Г°ГҐГ± Гў Г±ГҐГІГЁ  $NetName\n";
         $qry = "SELECT NODEID,NAME FROM ASTREE WHERE PARENTID = '{$ContID}'";
         $InsRecs = ibase_query($configdb,$qry);
         while ($InsRec = ibase_fetch_object($InsRecs)){
@@ -37,7 +37,7 @@ while ($rec = ibase_fetch_object($recs)) {
             $PinMK['NAME'] = $InsRec->NAME;
             $MK = GetMK($PinMK);
             if (count($MK) > 0){
-                $qry = "SELECT * FROM ISNETCONTROLLER('{$MK['NODEID']}')"; //вызов и вывод ХП
+                $qry = "SELECT * FROM ISNETCONTROLLER('{$MK['NODEID']}')"; //РІС‹Р·РѕРІ Рё РІС‹РІРѕРґ РҐРџ
                 $prep = ibase_prepare($qry);
                 $rs = ibase_execute ($prep);
                 $row = ibase_fetch_row($rs);
@@ -136,7 +136,7 @@ function GetDeviceType ($MK) {
     while ($rec = ibase_fetch_object($recs))
         $cat = $rec->CATEGORY;
     if ($cat == '3') {
-        $qry = "SELECT * FROM ISNETCONTROLLER('{$MK}')"; //вызов и вывод ХП
+        $qry = "SELECT * FROM ISNETCONTROLLER('{$MK}')"; //РІС‹Р·РѕРІ Рё РІС‹РІРѕРґ РҐРџ
         $prep = ibase_prepare($qry);
         $rs = ibase_execute ($prep);
         $row = ibase_fetch_row($rs);
@@ -173,13 +173,13 @@ function GetTakt($MK) {
     return $Res;
 }
 
-function GetMK ($PinMK) { //SELECT из LINK намеренно оставил в таком виде, чтобы не выносить определение МК в общий код. Так красивее и понятнее
+function GetMK ($PinMK) { //SELECT РёР· LINK РЅР°РјРµСЂРµРЅРЅРѕ РѕСЃС‚Р°РІРёР» РІ С‚Р°РєРѕРј РІРёРґРµ, С‡С‚РѕР±С‹ РЅРµ РІС‹РЅРѕСЃРёС‚СЊ РѕРїСЂРµРґРµР»РµРЅРёРµ РњРљ РІ РѕР±С‰РёР№ РєРѕРґ. РўР°Рє РєСЂР°СЃРёРІРµРµ Рё РїРѕРЅСЏС‚РЅРµРµ 
     global $configdb;
     $MK = array();
     $MKChildID =' ';
     $qry = "SELECT FINNODEID FROM LINK WHERE STARTNODEID = '{$PinMK['NODEID']}'";
     $recs = ibase_query($configdb,$qry);
-    if (empty($recs->FINNODEID)) { //SELECT получил пустоту
+    if (empty($recs->FINNODEID)) { //SELECT РїРѕР»СѓС‡РёР» РїСѓСЃС‚РѕС‚Сѓ
         $qry = "SELECT STARTNODEID FROM LINK WHERE FINNODEID = '{$PinMK['NODEID']}'";
         $InsRecs = ibase_query($configdb,$qry);
         while ($InsRec = ibase_fetch_object($InsRecs)) 
