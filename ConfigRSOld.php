@@ -3,7 +3,7 @@ $params = "lbd";
 include "sintar2007.php";
 
 $configdb = ibase_connect($config);
-$cont = substr(basename($lbd,'.ib'),3); //ËÏˇ ÍÓÌÚÓÎÎÂ‡
+$cont = substr(basename($lbd,'.ib'),3); //–∏–º—è –∫–æ–Ω—Ç—Ä–æ–ª–ª–µ—Ä–∞
 $NetAddress = Array (); //NETADDRESS->ADRVALUE WHERE NODEID=..
 $PinMK = Array ();
 $MKs = Array ();
@@ -27,7 +27,7 @@ class RecMK
     public $MKName = '';
     public $num_rs = '';
     public $takt = '';
-    public function __construct($MK,$NumRS,$Net) {  //$Net - ËÒÒÎÂ‰ÛÂÏ‡ˇ ÒÂÚ¸ ÍÓÌÚÓÎÎÂ‡
+    public function __construct($MK,$NumRS,$Net) {  //$Net - –∏—Å—Å–ª–µ–¥—É–µ–º–∞—è —Å–µ—Ç—å –∫–æ–Ω—Ç—Ä–æ–ª–ª–µ—Ä–∞
         $this->MKName = $MK;
         $this->device = GetDeviceType($MK);
         $this->num_rs = $NumRS;
@@ -38,16 +38,16 @@ class RecMK
 $qry = "SELECT NODEID FROM ASTREE WHERE NAME = '{$cont}' AND CATEGORY = 3";
 $recs = ibase_query($configdb,$qry);
 while ($rec = ibase_fetch_object($recs)) {
-    $ContID = $rec->NODEID;  //ID ÍÓÌÚÓÎÎÂ‡
+    $ContID = $rec->NODEID;  //ID –∫–æ–Ω—Ç—Ä–æ–ª–ª–µ—Ä–∞
 }
 $qry = "SELECT NETID FROM NETADDRESS WHERE NODEID = '{$ContID}'";
 $recs = ibase_query($configdb,$qry);
 while ($rec = ibase_fetch_object($recs)) {
-    $NetID = $rec->NETID;   //ID ÒÂÚË, Ó·‡·‡Ú˚‚‡ÂÏÓÈ ‚ ÚÂÍÛ˘ÂÏ Ú‡ÍÚÂ ˆËÍÎ‡
+    $NetID = $rec->NETID;   //ID —Å–µ—Ç–∏, –æ–±—Ä–∞–±–∞—Ç—ã–≤–∞–µ–º–æ–µ–π –≤ —Ç–µ–∫—É—â–µ–º —Ç–∞–∫—Ç–µ —Ü–∏–∫–ª–∞
     $qry = "SELECT NAME FROM NET WHERE NETID = '{$NetID}'";
     $InsRecs = ibase_query($configdb,$qry);
     while ($InsRec = ibase_fetch_object($InsRecs)) {
-        $NetName = $InsRec->NAME;   //ËÏˇ ˝ÚÓÈ ÒÂÚË
+        $NetName = $InsRec->NAME;   //–∏–º—è —ç—Ç–æ–π —Å–µ—Ç–∏
     }
     $NetType = str_split($NetName,2);
     if ($NetType[0] == 'rs') {
@@ -57,7 +57,7 @@ while ($rec = ibase_fetch_object($recs)) {
             $NumRS = $InsRec -> ADRVALUE;
         }
         if ($NumRS == ' ') {
-            echo "ÕÂ Á‡‰‡Ì ‡‰ÂÒ ‚ ÒÂÚË  $NetName\n";
+            echo "–ù–µ –∑–∞–¥–∞–Ω –∞–¥—Ä–µ—Å –≤ —Å–µ—Ç–∏ $NetName\n";
         }
         $qry = "SELECT NODEID,NAME FROM ASTREE WHERE PARENTID = '{$ContID}'";
         $InsRecs = ibase_query($configdb,$qry);
@@ -66,7 +66,7 @@ while ($rec = ibase_fetch_object($recs)) {
             $PinMK['NAME'] = $InsRec->NAME;
             $MK = GetMK($PinMK);
             if (count($MK) > 0){
-                $qry = "SELECT * FROM ISNETCONTROLLER('{$MK['NODEID']}')"; //‚˚ÁÓ‚ Ë ‚˚‚Ó‰ ’œ
+                $qry = "SELECT * FROM ISNETCONTROLLER('{$MK['NODEID']}')"; //–≤—ã–∑–æ–≤ –∏ –≤—ã–≤–æ–¥ –•–ü
                 $prep = ibase_prepare($qry);
                 $rs = ibase_execute ($prep);
                 $row = ibase_fetch_row($rs);
@@ -169,7 +169,7 @@ function GetDeviceType ($MK) {
         $cat = $rec->CATEGORY;
     } 
     if ($cat == '3') {
-        $qry = "SELECT * FROM ISNETCONTROLLER('{$MK}')"; //‚˚ÁÓ‚ Ë ‚˚‚Ó‰ ’œ
+        $qry = "SELECT * FROM ISNETCONTROLLER('{$MK}')"; //√¢√ª√ß√Æ√¢ √® √¢√ª√¢√Æ√§ √ï√è
         $prep = ibase_prepare($qry);
         $rs = ibase_execute ($prep);
         $row = ibase_fetch_row($rs);
@@ -203,7 +203,7 @@ function GetDeviceType ($MK) {
 function GetTakt($MK) {
     global $configdb;
     $Res='';
-    $qry = "SELECT SENSCOUNT FROM ASTREE WHERE NODEID ='{$MK}'"; // ‡ÚÂ„ÓËˇ 3 ÔÓÚÓÏÛ ˜ÚÓ ‚ NETADDRESS->NODEID RS-ÒÂÚÂÈ ÙË„ÛËÛÂÚ ÚÓÎ¸ÍÓ ÍÓÌÚÓÎÎÂ˚
+    $qry = "SELECT SENSCOUNT FROM ASTREE WHERE NODEID ='{$MK}'"; //–ö–∞—Ç–µ–≥–æ—Ä–∏—è 3 –ø–æ—Ç–æ–º—É —á—Ç–æ –≤ NETADDRESS->NODEID RS-—Å–µ—Ç–µ–π —Ñ–∏–≥—É—Ä–∏—Ä—É–µ—Ç —Ç–æ–ª—å–∫–æ –∫–æ–Ω—Ç—Ä–æ–ª–ª–µ—Ä—ã
     $recs = ibase_query($configdb,$qry);
     while ($rec = ibase_fetch_object($recs)) {
         $Res = $rec->SENSCOUNT;
@@ -220,7 +220,7 @@ function GetMK ($PinMK) {
     $MKChildID =' ';
     $qry = "SELECT FINNODEID FROM LINK WHERE STARTNODEID = '{$PinMK['NODEID']}'";
     $recs = ibase_query($configdb,$qry);
-    if (empty($recs->FINNODEID)) { //SELECT ÔÓÎÛ˜ËÎ ÔÛÒÚÓÚÛ
+    if (empty($recs->FINNODEID)) { //SELECT –ø–æ–ª—É—á–∏–ª –ø—É—Å—Ç–æ—Ç—É
         $qry = "SELECT STARTNODEID FROM LINK WHERE FINNODEID = '{$PinMK['NODEID']}'";
         $InsRecs = ibase_query($configdb,$qry);
         while ($InsRec = ibase_fetch_object($InsRecs)) {
